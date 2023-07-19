@@ -9,7 +9,7 @@ with codecs.open(os.path.join(here, "README.rst"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
 # you need to change all these
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 DESCRIPTION = 'easy tool kit'
 
 setup(
@@ -21,7 +21,7 @@ setup(
     packages=find_packages(),
     license='MIT',
     install_requires=[
-
+        'ffmpy','pydub','moviepy'
     ],
     classifiers=[
         "Development Status :: 1 - Planning",
