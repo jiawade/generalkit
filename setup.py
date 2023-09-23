@@ -9,7 +9,7 @@ with codecs.open(os.path.join(here, "README.rst"), encoding="utf-8") as fh:
     long_description = "\n" + fh.read()
 
 # you need to change all these
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 DESCRIPTION = 'easy tool kit'
 
 setup(
