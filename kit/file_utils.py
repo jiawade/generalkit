@@ -78,11 +78,12 @@ class Files:
         for f in os.walk(directory):
             for j in f[2]:
                 files.append(os.path.join(f[0], j))
+        ff=[]
         if format:
             for i in  files:
-                if not i.endswith(format):
-                    files.remove(i)
-        return files
+                if i.endswith(format):
+                    ff.append(i)
+        return ff
 
     @classmethod
     def is_file_exists(cls, file_path):

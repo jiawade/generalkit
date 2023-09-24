@@ -7,6 +7,7 @@ from pydub import AudioSegment
 from pydub.utils import make_chunks
 from pathlib import Path
 from moviepy.editor import VideoFileClip, concatenate_videoclips
+import subprocess
 
 
 class VideoHandler:
@@ -27,7 +28,7 @@ class VideoHandler:
 
     @classmethod
     def audio_format_converter(cls, source_file, target_file):
-        cmd = 'ffmpeg.exe -y -i ' + source_file + ' -acodec pcm_s16le -f s16le -ac 1 -ar 16000 ' + target_file
+        cmd = 'ffmpeg -y -i ' + source_file + ' -acodec pcm_s16le -f s16le -ac 1 -ar 16000 ' + target_file
         os.system(cmd)
 
     @classmethod
@@ -44,6 +45,23 @@ class VideoHandler:
     def extract_audio_from_video(cls, source_video, target_audio):
         audio = AudioSegment.from_file(source_video)
         audio.export(target_audio, format=Files.get_file_format(target_audio))
+
+    @classmethod
+    def alter_video_size(video, dest=None, aspect='16:9', scale='1280:720'):
+        print('altering: ' + video)
+        if dest is None:
+            dest = os.path.join(Files.get_file_dir_path(video),
+                                'altered_' + Files.get_file_name(video) + '.' + Files.get_file_format(video))
+        resize = 'ffmpeg -i {} -aspect {} -vf scale={} {}'.format(video, aspect, scale, dest)
+        subprocess.call(resize, shell=True)
+
+    @classmethod
+    def embed_subtitle_to_video(video, subtitle, dest_file=None):
+        sub = '\'' + subtitle.replace('\\', '\\\\').replace(':', '\:') + '\''
+        if dest_file is None:
+            dest_file = os.path.join(Files.get_file_dir_path(video),
+                                     'embed_' + Files.get_file_name(video) + '.' + Files.get_file_format(video))
+        cmdLine = '''ffmpeg -i {} -vf subtitles="{}" {}'''.format(video, sub, dest_file)
 
 
 class AudioHandler:
