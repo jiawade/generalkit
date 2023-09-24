@@ -47,7 +47,7 @@ class VideoHandler:
         audio.export(target_audio, format=Files.get_file_format(target_audio))
 
     @classmethod
-    def alter_video_size(video, dest=None, aspect='16:9', scale='1280:720'):
+    def alter_video_size(cls, video, dest=None, aspect='16:9', scale='1280:720'):
         print('altering: ' + video)
         if dest is None:
             dest = os.path.join(Files.get_file_dir_path(video),
@@ -56,12 +56,14 @@ class VideoHandler:
         subprocess.call(resize, shell=True)
 
     @classmethod
-    def embed_subtitle_to_video(video, subtitle, dest_file=None):
+    def embed_subtitle_to_video(cls, video, subtitle, dest_file=None):
+        print('embedding: ' + video)
         sub = '\'' + subtitle.replace('\\', '\\\\').replace(':', '\:') + '\''
         if dest_file is None:
             dest_file = os.path.join(Files.get_file_dir_path(video),
                                      'embed_' + Files.get_file_name(video) + '.' + Files.get_file_format(video))
-        cmdLine = '''ffmpeg -i {} -vf subtitles="{}" {}'''.format(video, sub, dest_file)
+        cmd_line = '''ffmpeg -i {} -vf subtitles="{}" {}'''.format(video, sub, dest_file)
+        subprocess.call(cmd_line, shell=True)
 
 
 class AudioHandler:
