@@ -12,39 +12,63 @@ import subprocess
 
 class VideoHandler:
     @classmethod
-    def video_format_converter(cls, source_video, target_video):
+    def video_format_converter(cls, source_file, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         video = ffmpy.FFmpeg(
-            inputs={source_video: None},
-            outputs={target_video: None})
+            inputs={source_file: None},
+            outputs={dest: None})
         video.run()
 
     @classmethod
-    def merge_videos(cls, videos, target_file):
+    def merge_videos(cls, source_file, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         all = []
-        for i in videos:
+        for i in source_file:
             all.append(VideoFileClip(i))
         final_video = concatenate_videoclips(all)
-        final_video.write_videofile(target_file)
+        final_video.write_videofile(dest)
 
     @classmethod
-    def audio_format_converter(cls, source_file, target_file):
-        cmd = 'ffmpeg -y -i ' + source_file + ' -acodec pcm_s16le -f s16le -ac 1 -ar 16000 ' + target_file
+    def audio_format_converter(cls, source_file, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
+        cmd = 'ffmpeg -y -i ' + source_file + ' -acodec pcm_s16le -f s16le -ac 1 -ar 16000 ' + dest
         os.system(cmd)
 
     @classmethod
-    def cut_video_by_second(cls, source_file, target_file, start_s, end_s):
+    def cut_video_by_second(cls, source_file, start_s, end_s, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         clipOri = VideoFileClip(source_file).subclip(start_s, end_s)
-        clipOri.write_videofile(target_file)
+        clipOri.write_videofile(dest)
 
     @classmethod
-    def extract_gif_from_video(cls, source_file, target_file, start_s, end_s, size):
+    def extract_gif_from_video(cls, source_file, start_s, end_s, size, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         clipOri = VideoFileClip(source_file).subclip(start_s, end_s)
-        clipOri.write_gif(target_file, size)
+        clipOri.write_gif(dest, size)
 
     @classmethod
-    def extract_audio_from_video(cls, source_video, target_audio):
-        audio = AudioSegment.from_file(source_video)
-        audio.export(target_audio, format=Files.get_file_format(target_audio))
+    def extract_audio_from_video(cls, source_file, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
+        audio = AudioSegment.from_file(dest)
+        audio.export(dest, format=Files.get_file_format(dest))
 
     @classmethod
     def alter_video_size(video, dest=None, aspect='16:9', scale='1280:720'):
@@ -67,33 +91,48 @@ class VideoHandler:
 class AudioHandler:
 
     @classmethod
-    def split_audio_by_ms(cls, source_file, destination, duration_ms):
+    def split_audio_by_ms(cls, source_file, duration_ms, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         f = Files.get_file_format(source_file)
         d = Files.get_file_name(source_file).replace(' ', '')
         audio = AudioSegment.from_file(source_file, format=f)
 
         chunks = make_chunks(audio, duration_ms)
         for i, chunk in enumerate(chunks):
-            path = os.path.join(destination, d)
+            path = os.path.join(dest, d)
             Path(path).mkdir(parents=True, exist_ok=True)
-            chunk_name = os.path.join(destination, d, '{}.{}'.format(i, f))
+            chunk_name = os.path.join(dest, d, '{}.{}'.format(i, f))
             chunk.export(chunk_name, format=f)
 
     @classmethod
-    def split_audio_by_second(cls, source_file, destination, duration_s):
-        AudioHandler.split_audio_by_ms(source_file, destination, duration_s * 1000)
+    def split_audio_by_second(cls, source_file, duration_s, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
+        AudioHandler.split_audio_by_ms(source_file, dest, duration_s * 1000)
 
     @classmethod
-    def cut_audio_by_ms(cls, source_file, destination_file, start_ms, end_ms):
+    def cut_audio_by_ms(cls, source_file, start_ms, end_ms, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         f = Files.get_file_format(source_file)
-        n = Files.get_file_name(source_file)
         audio = AudioSegment.from_file(source_file, format=f)
         slice = audio[start_ms:end_ms]
-        slice.export(destination_file, format=f)
+        slice.export(dest, format=f)
 
     @classmethod
-    def cut_audio_by_second(cls, source_file, destination, start_s, end_s):
-        AudioHandler.cut_audio_by_ms(source_file, destination, start_s * 1000, end_s * 1000)
+    def cut_audio_by_second(cls, source_file, start_s, end_s, dest=None):
+        if dest is None:
+            name = Files.get_file_name(source_file) + "_cut"
+            format = Files.get_file_format(source_file)
+            dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
+        AudioHandler.cut_audio_by_ms(source_file, dest, start_s * 1000, end_s * 1000)
 
     @classmethod
     def merge_audios(cls, audios, target_file):
@@ -106,4 +145,3 @@ class AudioHandler:
         for i in all_files:
             audio_merged += i
         audio_merged.export(target_file, format=Files.get_file_format(target_file))
-
