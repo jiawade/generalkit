@@ -14,7 +14,7 @@ class VideoHandler:
     @classmethod
     def video_format_converter(cls, source_file, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "converted_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         video = ffmpy.FFmpeg(
@@ -25,7 +25,7 @@ class VideoHandler:
     @classmethod
     def merge_videos(cls, source_file, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "merged_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         all = []
@@ -37,7 +37,7 @@ class VideoHandler:
     @classmethod
     def audio_format_converter(cls, source_file, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "converted_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         cmd = 'ffmpeg -y -i ' + source_file + ' -acodec pcm_s16le -f s16le -ac 1 -ar 16000 ' + dest
@@ -46,7 +46,7 @@ class VideoHandler:
     @classmethod
     def cut_video_by_second(cls, source_file, start_s, end_s, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "cut_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         clipOri = VideoFileClip(source_file).subclip(start_s, end_s)
@@ -55,7 +55,7 @@ class VideoHandler:
     @classmethod
     def extract_gif_from_video(cls, source_file, start_s, end_s, size, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "extracted_gif_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         clipOri = VideoFileClip(source_file).subclip(start_s, end_s)
@@ -64,7 +64,7 @@ class VideoHandler:
     @classmethod
     def extract_audio_from_video(cls, source_file, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "extracted_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         audio = AudioSegment.from_file(dest)
@@ -95,7 +95,7 @@ class AudioHandler:
     @classmethod
     def split_audio_by_ms(cls, source_file, duration_ms, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "split_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         f = Files.get_file_format(source_file)
@@ -112,7 +112,7 @@ class AudioHandler:
     @classmethod
     def split_audio_by_second(cls, source_file, duration_s, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "split_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         AudioHandler.split_audio_by_ms(source_file, dest, duration_s * 1000)
@@ -120,7 +120,7 @@ class AudioHandler:
     @classmethod
     def cut_audio_by_ms(cls, source_file, start_ms, end_ms, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "cut_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         f = Files.get_file_format(source_file)
@@ -131,7 +131,7 @@ class AudioHandler:
     @classmethod
     def cut_audio_by_second(cls, source_file, start_s, end_s, dest=None):
         if dest is None:
-            name = Files.get_file_name(source_file) + "_cut"
+            name = "cut_" + Files.get_file_name(source_file)
             format = Files.get_file_format(source_file)
             dest = os.path.join(Files.get_file_parent(source_file), '{}.{}'.format(name, format))
         AudioHandler.cut_audio_by_ms(source_file, dest, start_s * 1000, end_s * 1000)
